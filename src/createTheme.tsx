@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { createTheming } from "react-jss";
 
+import { createMakeStyles } from "./createMakeStyles";
 // eslint-disable-next-line no-unused-vars
 import { CreateThemeTypes } from "./types";
 
@@ -29,6 +30,8 @@ export const createSwithableTheme = function <Theme, ThemeNames extends string>(
   const reducer = createReducer<Types["Reduce"]>();
   const ThemeNameContext = createContext({} as Types["ThemeNameContent"]);
 
+  const makeStyles = createMakeStyles(Theming);
+
   const useThemeName = () => useContext(ThemeNameContext);
 
   const firstThemeName = Object.keys(themes)[0] as ThemeNames;
@@ -51,5 +54,5 @@ export const createSwithableTheme = function <Theme, ThemeNames extends string>(
       </Theming.ThemeProvider>
     );
   };
-  return { useThemeName, ThemeProvider };
+  return { useThemeName, ThemeProvider, makeStyles };
 };
