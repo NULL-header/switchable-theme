@@ -20,6 +20,7 @@
     "immutability-helper": "^3.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-hooks-async": "^3.10.1",
     "react-jss": "^10.5.0",
     "use-reducer-async": "^2.0.1"
   },

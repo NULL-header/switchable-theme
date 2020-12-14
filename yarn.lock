@@ -4099,6 +4099,11 @@ react-dom@^16.13.1:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
+react-hooks-async@^3.10.1:
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/react-hooks-async/-/react-hooks-async-3.10.1.tgz#427ad61361ecb1e43cefaafa5f584e6560da8eb8"
+  integrity sha512-4xR8CgUFsEPFir6c70esluUiBQnorFzK8kBLQ1bycpRrJB5sFhTPv3+P5zRlge8JNjF7R+n0SfuyEYTxfdJdYA==
+
 react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
