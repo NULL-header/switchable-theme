@@ -12,14 +12,17 @@ type State<ThemeNames> = {
   themeName: ThemeNames;
 };
 
-export type UseThemeArgs<ThemeNames> = {
+export type UseThemeArgs<ThemeNames extends string> = {
   cacheKey: string;
   db: KVSIndexedDB<any>;
   defaultThemeName: ThemeNames;
   setState: (arg: Partial<State<ThemeNames>>) => void;
 };
 
-export const createUseTheme = <ThemeNames>() => <T extends Theming<any>, U>(
+export const createUseTheme = <ThemeNames extends string>() => <
+  T extends Theming<any>,
+  U
+>(
   theming: T,
   themes: U
 ) => (
@@ -39,13 +42,11 @@ export const createUseTheme = <ThemeNames>() => <T extends Theming<any>, U>(
   );
   const logics = useLogics<ThemeNames>(args);
   useAsyncRun(logics.initializeThemeName);
+
   return useMemo(() => {
     const setThemeNameWithDB = (themeName: ThemeNames) =>
-      logics.setThemeNameWithDB.start(themeName as any);
-    const ThemeProvider = useMemo(
-      () => createThemeProvider(theming, themes),
-      []
-    );
+      logics.setThemeNameWithDB.start(themeName as any) as Promise<void>;
+    const ThemeProvider = createThemeProvider(theming, themes);
     return { setThemeNameWithDB, ThemeProvider };
   }, [logics.setThemeNameWithDB]);
 };

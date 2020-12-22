@@ -1,6 +1,6 @@
 import { UseThemeArgs } from "../useTheme";
 
-export type Logic<T, Args extends unknown[]> = <ThemeNames>(
+export type Logic<T, Args extends unknown[]> = <ThemeNames extends string>(
   useThemeArg: UseThemeArgs<ThemeNames>
 ) => (signalArg: AbortController, ...args: Args) => T;
 
