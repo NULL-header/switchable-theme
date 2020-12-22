@@ -6,7 +6,11 @@ import { UseThemeArgs } from "../useTheme";
 import { createInitializeThemeName } from "./initializeThemeName";
 import { createSetThemeNameWithDB } from "./setThemeNameWithDB";
 
-const useLogic = <ThemeNames, T extends Promise<any>, U extends unknown[]>(
+const useLogic = <
+  ThemeNames extends string,
+  T extends Promise<any>,
+  U extends unknown[]
+>(
   factory: Logic<T, U>,
   arg: UseThemeArgs<ThemeNames>
 ) => {
@@ -14,7 +18,9 @@ const useLogic = <ThemeNames, T extends Promise<any>, U extends unknown[]>(
   return useAsyncTask(logic);
 };
 
-export const useLogics = <ThemeNames>(args: UseThemeArgs<ThemeNames>) => {
+export const useLogics = <ThemeNames extends string>(
+  args: UseThemeArgs<ThemeNames>
+) => {
   const initializeThemeName = useLogic(createInitializeThemeName, args);
   const setThemeNameWithDB = useLogic(createSetThemeNameWithDB, args);
   return useMemo(() => {

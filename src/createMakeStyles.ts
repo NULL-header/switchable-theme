@@ -8,7 +8,7 @@ type MassJSS<Styles, Props> = {
 };
 
 type BranchArg<Styles, Props> = Props extends undefined
-  ? () => Record<keyof UIEvent, string>
+  ? () => Record<keyof Styles, string>
   : (arg: Props) => Record<keyof Styles, string>;
 
 export const createMakeStyles = <
