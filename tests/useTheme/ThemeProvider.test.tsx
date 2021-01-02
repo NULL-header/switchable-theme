@@ -1,7 +1,7 @@
 import React from "react";
 import { createTheming } from "react-jss";
-import { render, waitFor } from "@testing-library/react";
-import { createThemeProvider } from "src/ThemeProvider";
+import { render, act } from "@testing-library/react";
+import { createThemeProvider } from "src/useTheme/ThemeProvider";
 
 const themesMocked = {
   theme1: { context: "theme1-context" },
@@ -11,6 +11,7 @@ type TestThemes = typeof themesMocked;
 type TestTheme = TestThemes[keyof TestThemes];
 const ThemeContext = React.createContext<TestTheme>({} as any);
 const Theming = createTheming(ThemeContext);
+const useThemeNameEffectMocked = jest.fn();
 const themeSpy = jest.fn();
 
 const ComponentMocked = () => {
@@ -19,7 +20,11 @@ const ComponentMocked = () => {
   return <div>Mocked</div>;
 };
 
-const ThemeProvider = createThemeProvider(Theming, themesMocked);
+const ThemeProvider = createThemeProvider(
+  Theming,
+  themesMocked,
+  useThemeNameEffectMocked
+);
 
 describe("normal system", () => {
   beforeEach(() => {
@@ -33,7 +38,9 @@ describe("normal system", () => {
       </ThemeProvider>
     );
     expect(themeSpy).toBeCalledWith(themesMocked.theme1);
+    expect(useThemeNameEffectMocked).toBeCalledWith("theme1");
   });
+
   it("able to change theme", async () => {
     let setThemeName: (themeName: keyof TestThemes) => void;
     const ParentComponentMocked = () => {
@@ -52,7 +59,7 @@ describe("normal system", () => {
     render(<ParentComponentMocked />);
 
     expect(themeSpy).toHaveBeenLastCalledWith(themesMocked.theme1);
-    await waitFor(() => {
+    act(() => {
       setThemeName("theme2");
     });
     expect(themeSpy).toHaveBeenLastCalledWith(themesMocked.theme2);

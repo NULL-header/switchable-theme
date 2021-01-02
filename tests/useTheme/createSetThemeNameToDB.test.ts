@@ -1,13 +1,13 @@
-import { createInitializeThemeName } from "src/logics/initializeThemeName";
-import { Resume, Resumer } from "src/utilForTest";
+import { createSetThemeNameToDB } from "src/useTheme/createSetThemeNameToDB";
+import { Resumer, Resume } from "src/utilForTest";
 
 type TestThemeNames = "test1" | "test2";
 const cacheKeyMocked = "testKey";
 const defaultNameMocked = "test1" as TestThemeNames;
-const lastThemeName = "lastThemeName";
+const themeNameMocked = "test2";
 const dbMocked = { set: jest.fn(), get: jest.fn() };
 const setStateMocked = jest.fn();
-const initializeThemeName = createInitializeThemeName<TestThemeNames>({
+const setThemeNameToDB = createSetThemeNameToDB({
   cacheKey: cacheKeyMocked,
   defaultThemeName: defaultNameMocked,
   db: dbMocked as any,
@@ -26,39 +26,29 @@ describe("normal system", () => {
 
   it("order called", async () => {
     dbMocked.get.mockImplementation(resumer.stop);
-    const process = initializeThemeName(signal);
-    expect(setStateMocked).toHaveBeenLastCalledWith({ isLoading: true });
+    const process = setThemeNameToDB(themeNameMocked)(signal);
+    expect(setStateMocked).toHaveBeenLastCalledWith({ isSetting: true });
     resumer.restart();
     await process;
-    expect(dbMocked.get).toBeCalledWith(cacheKeyMocked);
+    expect(dbMocked.set).toBeCalledWith(cacheKeyMocked, themeNameMocked);
     expect(setStateMocked).toHaveBeenLastCalledWith({
-      isLoading: false,
-      themeName: defaultNameMocked,
-    });
-  });
-
-  it("if there is last themeName", async () => {
-    dbMocked.get.mockImplementation(() => lastThemeName);
-    await initializeThemeName(signal);
-    expect(setStateMocked).toHaveBeenLastCalledWith({
-      isLoading: false,
-      themeName: lastThemeName,
+      isSetting: false,
     });
   });
 
   it("if it is aborted before logic is called", async () => {
     signal.abort();
-    await initializeThemeName(signal);
+    await setThemeNameToDB(themeNameMocked)(signal);
     expect(setStateMocked).not.toBeCalled();
     expect(dbMocked.get).not.toBeCalled();
   });
 
-  it("if it is aborted before finishing to load", async () => {
+  it("if it is aborted before finishing to set", async () => {
     dbMocked.get.mockImplementation(resumer.stop);
-    const process = initializeThemeName(signal);
+    const process = setThemeNameToDB(themeNameMocked)(signal);
     signal.abort();
     await process;
-    expect(setStateMocked).toBeCalledWith({ isLoading: true });
+    expect(setStateMocked).toBeCalledWith({ isSetting: true });
     expect(setStateMocked).toBeCalledTimes(1);
   });
 });
