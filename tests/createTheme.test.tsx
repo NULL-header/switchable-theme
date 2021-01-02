@@ -28,7 +28,7 @@ describe("integration test", () => {
   });
 
   it("able to switch theme", async () => {
-    let setThemeName: (themeName: ThemeNames) => Promise<void>;
+    let setThemeName: (themeName: ThemeNames) => void;
     type State = {
       isSetting: boolean;
       isLoading: boolean;
@@ -46,15 +46,16 @@ describe("integration test", () => {
           }),
         []
       );
-      const { ThemeProvider, setThemeNameWithDB } = theme.useTheme(
+      const ThemeProvider = theme.useTheme(
         cacheKey,
         dbMocked as any,
         defaultThemeName,
         insertState
       );
       React.useEffect(() => {
-        setThemeName = setThemeNameWithDB;
-      }, [setThemeNameWithDB]);
+        setThemeName = (themeName: ThemeNames) =>
+          setState((state) => [{ ...state[0], themeName }]);
+      }, []);
       return (
         <ThemeProvider themeName={state[0].themeName}>
           <ComponentMocked />
@@ -80,13 +81,10 @@ describe("integration test", () => {
     await waitFor(() => {
       expect(stateSpy).toHaveBeenLastCalledWith({
         isSetting: false,
-        themeName: "theme2",
       });
     });
-    await waitFor(() => {
-      const target = screen.getByTestId("target");
-      const style = window.getComputedStyle(target);
-      expect(style).toHaveProperty("color", themes.theme2.color);
-    });
+    const targetChanged = screen.getByTestId("target");
+    const styleChanged = window.getComputedStyle(targetChanged);
+    expect(styleChanged).toHaveProperty("color", themes.theme2.color);
   });
 });
